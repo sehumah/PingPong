@@ -18,16 +18,13 @@ void setup(){
 
 void draw(){
   background(50,150,50);
-  
   drawBall(); // draw the ball
   moveBall(); // move the ball
   checkWalls(); // bounce ball off the left and right walls
   rectangularPaddles();// draw rectangular paddles
   circluarPaddles(); // draw circular paddles
   drawLines();// draw separation line
-
 } // end draw
-
 
 
 void drawBall(){
@@ -49,7 +46,6 @@ void checkWalls(){
   if((x+r) > width || (x-r) < 0){
     xspeed *= -1;
   }
-  
   // bounce ball off top and bottom walls
   if((y+r) > height || (y-r)<0){
     yspeed *= -1;
@@ -74,7 +70,6 @@ void drawLines(){
   stroke(0);
   strokeWeight(2);
   line(width/2,0,width/2,height);
-  
   // horizontal line
   stroke(255);
   strokeWeight(1);

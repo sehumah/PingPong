@@ -6,6 +6,7 @@ boolean gameOn;
 void setup(){
   background(0,0,200);
   size(800,400);
+  //fullScreen();
   
   // initialize variables
   x = width/2;
@@ -24,6 +25,7 @@ void draw(){
   rectangularPaddles();// draw rectangular paddles
   circluarPaddles(); // draw circular paddles
   drawLines();// draw separation line
+  edgeLines(); // draw white lines around the edges
 } // end draw
 
 
@@ -75,3 +77,25 @@ void drawLines(){
   strokeWeight(1);
   line(0,height/2,width,height/2);
 } // end drawLines
+
+void edgeLines(){
+  // top white line
+  stroke(255);
+  strokeWeight(5);
+  line(0,0,width,0);
+  
+  // bottom white line
+  stroke(255);
+  strokeWeight(5);
+  line(0,height,width,height);
+  
+  // left white line
+  stroke(255);
+  strokeWeight(5);
+  line(0,0,0,height);
+  
+  // right white line
+  stroke(255);
+  strokeWeight(5);
+  line(width,0,width,height);
+}

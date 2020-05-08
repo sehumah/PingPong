@@ -4,7 +4,7 @@ float xspeed,yspeed; // horizontal speed(left-right), vertical speed(top-bottom)
 boolean gameOn;
 
 void setup(){
-  background(50,150,50);
+  background(0,0,200);
   size(800,400);
   
   // initialize variables
@@ -17,7 +17,7 @@ void setup(){
 } // end setup
 
 void draw(){
-  background(50,150,50);
+  background(0,0,140);
   drawBall(); // draw the ball
   moveBall(); // move the ball
   checkWalls(); // bounce ball off the left and right walls

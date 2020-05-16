@@ -1,10 +1,10 @@
 // declare variables
 float ballx,bally,ballradius; // ball's x-coordinate, y-coordinate & radius
-float xspeed,yspeed; // ball's horizontal speed(left-right), vertical speed(top-bottom)
-float leftrectx,leftrecty,rightrectx,rightrecty,rectwidth,rectheight; // rectangular paddles' x & y coordinates and width & height
-float leftcirclex,leftcircley,rightcirclex,rightcircley,circleradius;// circular paddles' x & y coordinates and width, height & radius
-int score1,score2;
-float score1x,score2x,scorey;
+float xspeed,yspeed; // ball's horizontal speed(left-right) & vertical speed(top-bottom)
+float leftrectx,leftrecty,rightrectx,rightrecty,rectwidth,rectheight; // rectangular paddles' x & y coordinates, width & height
+float leftcirclex,leftcircley,rightcirclex,rightcircley,circleradius;// circular paddles' x & y coordinates, width, height & radius
+int score1,score2; // score values for both players
+float score1x,score2x,scorey; // both scores' x-coordinates and y-coordinate
 boolean gameOn;
 
 void setup(){
@@ -14,8 +14,8 @@ void setup(){
   ballx = width/2;
   bally = height/2;
   ballradius = 20;
-  xspeed = 15;
-  yspeed = 15;
+  xspeed = 2;
+  yspeed = 2;
   gameOn = false;
   leftrectx = 0;
   leftrecty = 0;
@@ -27,7 +27,7 @@ void setup(){
   leftcircley = height/2;
   rightcirclex = width;
   rightcircley = height/2;
-  circleradius = 50;
+  circleradius = 70;
   score1 = 0;
   score2 = 0;
   score1x = 2*width/10;
@@ -41,10 +41,12 @@ void draw(){
   drawBall();
   moveBall();
   checkWalls(); // bounce ball off the top, bottom, left and right walls
-  //rectangularPaddles();
-  //moveRectPaddles();
-  circluarPaddles();
-  moveCircularPaddles();
+  rectangularPaddles();
+  moveRectPaddles();
+  checkRPaddleHit();
+  // circluarPaddles();
+  // moveCircularPaddles();
+  // checkCPaddleHit(); // check if ball hits the paddle
   separationLines();// draw horizontal and vertical separation lines
   borderLines(); // draw white lines around all 4 edges
   playerInfo();
@@ -67,10 +69,11 @@ void moveBall(){
 } // end moveBall
 
 void checkWalls(){
-  // bounce ball off left and right walls
-  if((ballx+ballradius) > width || (ballx-ballradius) < 0){
-    xspeed *= -1;
-  }
+  //// bounce ball off left and right walls
+  //if((ballx+ballradius) > width || (ballx-ballradius) < 0){
+  //  xspeed *= -1;
+  //}
+  
   // bounce ball off top and bottom walls
   if((bally+ballradius) > height || (bally-ballradius) < 0){
     yspeed *= -1;
@@ -124,10 +127,10 @@ void moveCircularPaddles(){
   }
   
   // contain left circular paddle in the screen
-  if((leftcircley-circleradius) < 0){
+  if( (leftcircley - circleradius) < 0){
     leftcircley = 0 + circleradius;
   }
-  else if((leftcircley+circleradius) > height){
+  else if( (leftcircley + circleradius) > height){
     leftcircley = height - circleradius;
   }
   
@@ -181,4 +184,18 @@ void playerInfo(){
   textSize(20);
   text(p1score,score1x,scorey);
   text(p2score,score2x,scorey);
+}
+
+void checkCPaddleHit(){
+  if((ballx+ballradius > rightcirclex-circleradius) || (ballx-ballradius < leftcirclex+circleradius)){
+    xspeed *= -1;
+    yspeed *= -1;
+  }
+}
+
+void checkRPaddleHit(){
+  if((ballx+ballradius > rightrectx) || (ballx-ballradius < leftrectx+rectwidth)){
+    xspeed *= -1;
+    yspeed *= -1;
+  }
 }

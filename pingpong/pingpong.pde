@@ -1,201 +1,126 @@
-// declare variables
-float ballx,bally,ballradius; // ball's x-coordinate, y-coordinate & radius
-float xspeed,yspeed; // ball's horizontal speed(left-right) & vertical speed(top-bottom)
-float leftrectx,leftrecty,rightrectx,rightrecty,rectwidth,rectheight; // rectangular paddles' x & y coordinates, width & height
-float leftcirclex,leftcircley,rightcirclex,rightcircley,circleradius;// circular paddles' x & y coordinates, width, height & radius
-int score1,score2; // score values for both players
-float score1x,score2x,scorey; // both scores' x-coordinates and y-coordinate
+// Declare variables
+float xBall;
+float yBall;
+float diameter; // diameter of ball
+float radius;
+float xSpeed; // right-left speed of ball
+float ySpeed; // top-bottom speed of ball
+float leftPaddleX; // X coordinate for left paddle
+float leftPaddleY; // Y coordinate for left paddle
+float rightPaddleX; // X coordinate for right paddle
+float rightPaddleY; // Y coordinate for right paddle
+float paddleHeight; // height of paddles
+float paddleWidth; // width of paddles
+int leftPlayerScore = 0; // score for player on left side
+int rightPlayerScore; // score for player on right side
 boolean gameOn;
 
 void setup(){
-  size(800,400); // screen size
-  
-  // initialize variables
-  ballx = width/2;
-  bally = height/2;
-  ballradius = 20;
-  xspeed = 2;
-  yspeed = 2;
+  size(800,400);
+  xBall = width/2; //horizontal position of ball
+  yBall = height/2; //vertical position of ball
+  diameter = 20;
+  radius = diameter/2; //radius of ellipse
+  xSpeed = 5; //horizontal speed of ball
+  ySpeed = 5; //vertical speed of ball
+  leftPaddleX = 0; 
+  leftPaddleY = 0;
+  rightPaddleX = 49*width/50;
+  rightPaddleY = 3*height/4;
+  paddleWidth = width/50;
+  paddleHeight = height/4;
+  leftPlayerScore = 0;
+  rightPlayerScore = 0;
   gameOn = false;
-  leftrectx = 0;
-  leftrecty = 0;
-  rightrectx = 29*width/30;
-  rightrecty = 3.97*height/5;
-  rectwidth = width/30;
-  rectheight = height/5;
-  leftcirclex = 0;
-  leftcircley = height/2;
-  rightcirclex = width;
-  rightcircley = height/2;
-  circleradius = 70;
-  score1 = 0;
-  score2 = 0;
-  score1x = 2*width/10;
-  score2x = 6.8*width/10;
-  scorey = height/15;
 } // end setup
 
 void draw(){
   background(0,0,150);
-  //background(0,140,0);
-  drawBall();
+  displayObjects();
   moveBall();
-  checkWalls(); // bounce ball off the top, bottom, left and right walls
-  rectangularPaddles();
-  moveRectPaddles();
-  checkRPaddleHit();
-  // circluarPaddles();
-  // moveCircularPaddles();
-  // checkCPaddleHit(); // check if ball hits the paddle
-  separationLines();// draw horizontal and vertical separation lines
-  borderLines(); // draw white lines around all 4 edges
-  playerInfo();
+  moveLeftPaddle();
+  moveRightPaddle();
+  checkWall();
+  checkLeftPaddle();
+  checkRightPaddle();
 } // end draw
 
 
-void drawBall(){
-  fill(255);
-  ellipse(ballx,bally,ballradius,ballradius);
-}
+void displayObjects(){
+  // draw ball
+  fill(255,255,0);
+  ellipse(xBall, yBall, diameter, diameter);
+  
+  // draw paddles
+  fill(255, 255, 0);
+  rect(leftPaddleX, leftPaddleY, paddleWidth, paddleHeight);
+  rect(rightPaddleX, rightPaddleY, paddleWidth, paddleHeight);
+
+  // display scores
+  textSize(20);
+  text("Player1: " + leftPlayerScore, width/6, height/10);
+  text("Player2: " + rightPlayerScore, 2.8*width/4, height/10);
+  
+  // draw center line
+  stroke(255,255,0);
+  strokeWeight(1.5);
+  line(width/2,0,width/2,height);
+} // end displayStuff
+
+void moveLeftPaddle(){
+  if (mouseX < width/2){ //moving left paddles
+    leftPaddleY = mouseY;
+    if (leftPaddleY + paddleHeight > height){
+      leftPaddleY = height - paddleHeight;
+    }
+  }
+} // end moveLeftPaddle
+
+void moveRightPaddle(){
+  if (mouseX > width/2){ //moving right paddle
+    rightPaddleY = mouseY;
+    if (rightPaddleY + paddleHeight > height){
+      rightPaddleY = height - paddleHeight;
+    }
+  }
+} // end moveRightPaddle
+
+void checkLeftPaddle(){
+  if ((xBall - radius <= leftPaddleX + paddleWidth) && (yBall > leftPaddleY) && (yBall < leftPaddleY + paddleHeight)){
+    xSpeed = xSpeed * -1;
+  }
+} // end checkLeftPaddle
+
+void checkRightPaddle(){
+  if ((xBall + radius >= rightPaddleX) && (yBall > rightPaddleY) && (yBall < rightPaddleY + paddleHeight)){
+    xSpeed = xSpeed * -1;
+  }
+} // end checkRightPaddle
 
 void moveBall(){
   if(mousePressed){
     gameOn = true;
   }
   if(gameOn){
-    ballx = ballx + xspeed;
-    bally = bally + yspeed;
+    xBall = xBall + xSpeed;
+    yBall = yBall + ySpeed;
   }
 } // end moveBall
 
-void checkWalls(){
-  //// bounce ball off left and right walls
-  //if((ballx+ballradius) > width || (ballx-ballradius) < 0){
-  //  xspeed *= -1;
-  //}
-  
-  // bounce ball off top and bottom walls
-  if((bally+ballradius) > height || (bally-ballradius) < 0){
-    yspeed *= -1;
+void checkWall(){
+  if (yBall + radius > height || yBall - radius < 0){ 
+    ySpeed = ySpeed * -1;
   }
-} // end checkWalls
-
-void rectangularPaddles(){
-  fill(200,0,0);
-  stroke(255);
-  strokeWeight(2);
-  rect(leftrectx,leftrecty,rectwidth,rectheight); // left rectangular paddle
-  rect(rightrectx,rightrecty,rectwidth,rectheight); // right rectangular paddle
-} // end rectangularPaddles
-
-void moveRectPaddles(){ // prevent both rectangular paddles from leaving the screen
-  // move left paddle
-  if(mouseX < width/2){
-    leftrecty = mouseY;
+  if (xBall - radius <= 0){
+    rightPlayerScore = rightPlayerScore + 1;
+    xBall = width/2;
+    yBall = height/2;
+    gameOn = false;
+  } 
+  else if (xBall + radius >= width){
+    leftPlayerScore = leftPlayerScore + 1;
+    xBall = width/2;
+    yBall = height/2;
+    gameOn = false;
   }
-  // move right paddle
-  else{
-    rightrecty = mouseY;
-  }
-  
-  // contain left rectangular paddle
-  if( (leftrecty+rectheight) > height){
-    leftrecty = height - rectheight;
-  }
-  // contain right rectangular paddle
-  else if(rightrecty+rectheight > height){
-    rightrecty = height - rectheight;
-  }
-}
-
-void circluarPaddles(){
-  fill(200,0,0);
-  stroke(255);
-  strokeWeight(2);
-  ellipse(leftcirclex,leftcircley,circleradius,circleradius); // left circular paddle
-  ellipse(rightcirclex,rightcircley,circleradius,circleradius); // right circular paddle
-} // end circluarPaddles
-
-void moveCircularPaddles(){
-  // move left circular paddle
-  if(mouseX < width/2){
-    leftcircley = mouseY;
-  }
-  // move right circular paddle
-  else {
-    rightcircley = mouseY;
-  }
-  
-  // contain left circular paddle in the screen
-  if( (leftcircley - circleradius) < 0){
-    leftcircley = 0 + circleradius;
-  }
-  else if( (leftcircley + circleradius) > height){
-    leftcircley = height - circleradius;
-  }
-  
-  // contain right circular paddle in the screen
-  if((rightcircley-circleradius) < 0){
-    rightcircley = 0 + circleradius;
-  }
-  else if((rightcircley+circleradius) > height){
-    rightcircley = height - circleradius;
-  }
-} // end moveCircularPaddles
-
-void separationLines(){
-  // vertical separation line
-  stroke(100);
-  strokeWeight(2);
-  line(width/2,0,width/2,height);
-  
-  // horizontal separation line
-  stroke(255);
-  strokeWeight(1);
-  line(0,height/2,width,height/2);
-} // end separationLines
-
-void borderLines(){
-  // top white line
-  stroke(255);
-  strokeWeight(5);
-  line(0,0,width,0);
-  
-  // bottom white line
-  stroke(255);
-  strokeWeight(5);
-  line(0,height,width,height);
-  
-  // left white line
-  stroke(255);
-  strokeWeight(5);
-  line(0,0,0,height);
-  
-  // right white line
-  stroke(255);
-  strokeWeight(5);
-  line(width,0,width,height);
-}
-
-void playerInfo(){
-  String p1score = "Player1: " + score1;
-  String p2score = "Player2: " + score2;
-  fill(255);
-  textSize(20);
-  text(p1score,score1x,scorey);
-  text(p2score,score2x,scorey);
-}
-
-void checkCPaddleHit(){
-  if((ballx+ballradius > rightcirclex-circleradius) || (ballx-ballradius < leftcirclex+circleradius)){
-    xspeed *= -1;
-    yspeed *= -1;
-  }
-}
-
-void checkRPaddleHit(){
-  if((ballx+ballradius > rightrectx) || (ballx-ballradius < leftrectx+rectwidth)){
-    xspeed *= -1;
-    yspeed *= -1;
-  }
-}
+} // end checkWall
